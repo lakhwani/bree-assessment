@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const NEXT_PUBLIC_BACKEND_DOMAIN = process.env.NEXT_PUBLIC_BACKEND_DOMAIN || "";
+
 interface ScreeningResult {
   nameHit: boolean;
   dobHit: boolean;
@@ -12,9 +14,12 @@ export const screenCustomer = async (
   country: string
 ): Promise<ScreeningResult> => {
   try {
-    const response = await axios.get("http://localhost:4000/api/screen", {
-      params: { fullName, dateOfBirth, country },
-    });
+    const response = await axios.get(
+      `${NEXT_PUBLIC_BACKEND_DOMAIN}/api/screen`,
+      {
+        params: { fullName, dateOfBirth, country },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Error screening customer:", error);
