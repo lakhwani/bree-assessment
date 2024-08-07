@@ -4,36 +4,14 @@ This project consists of a frontend and a backend to screen customers against th
 
 ![breedemo](https://github.com/user-attachments/assets/202bc008-8183-4995-80da-e859bca0fbc1)
 
-
-## Project Structure
-
-```
-│
-├── backend/
-│   ├── src/
-│   │   ├── app.ts
-│   │   ├── routes/
-│   │   ├── controllers/
-│   │   └── ...
-│   ├── .env.example
-│   ├── package.json
-│   └── tsconfig.json
-│
-├── frontend/
-│   ├── pages/
-│   │   ├── index.tsx
-│   │   └── ...
-│   ├── .env.example
-│   ├── package.json
-│   └── ...
-│
-└── ...
-```
-
 ## Prerequisites
 
 - Node.js (>= 14.x)
 - npm (>= 6.x)
+
+## Accessing the Publicly Accessible URL.
+The frontend of the application is deployed on: [https://bree-assessment.vercel.app/](https://bree-assessment.vercel.app/)
+**Note**: Ensure the backend is running locally on `http://localhost:4000` for the frontend to communicate with it.
 
 ## Setup Instructions
 
@@ -130,5 +108,3 @@ The frontend requires the following environment variables, defined in the `.env`
 ### Accessing the Application
 
 - Open your browser and navigate to `http://localhost:3000` to access the frontend.
-
-**Note**: Ensure the backend is running locally on `http://localhost:4000` for the frontend to communicate with it.
