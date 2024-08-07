@@ -7,9 +7,11 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <Box minHeight="100vh" display="flex" flexDirection="column">
+    <Box minHeight="100vh" display="flex" flexDirection="column" bg="gray.50">
       <Navbar />
-      <Box flex={1}>{children}</Box>
+      <Box flex={1} py={8}>
+        {children}
+      </Box>
     </Box>
   );
 }
