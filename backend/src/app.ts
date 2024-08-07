@@ -14,7 +14,7 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: FRONTEND_URL || "http://localhost:3000",
+  origin: FRONTEND_URL || "https://bree-assessment.vercel.app",
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
