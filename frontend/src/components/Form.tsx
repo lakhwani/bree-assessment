@@ -8,6 +8,7 @@ import {
   FormControl,
   FormLabel,
   useToast,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import Indicator from "./Indicator";
@@ -19,12 +20,19 @@ interface FormData {
   country: string;
 }
 
+interface FormErrors {
+  fullName?: string;
+  dateOfBirth?: string;
+  country?: string;
+}
+
 export default function Form() {
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     dateOfBirth: "",
     country: "",
   });
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [screeningResult, setScreeningResult] = useState<null | {
     nameHit: boolean;
@@ -33,13 +41,42 @@ export default function Form() {
   }>(null);
   const toast = useToast();
 
+  function validateForm(): boolean {
+    const errors: FormErrors = {};
+    let isValid = true;
+
+    if (formData.fullName.trim().length < 2) {
+      errors.fullName = "Full name must be at least 2 characters long";
+      isValid = false;
+    }
+
+    const today = new Date();
+    const birthDate = new Date(formData.dateOfBirth);
+    if (isNaN(birthDate.getTime()) || birthDate > today) {
+      errors.dateOfBirth = "Please enter a valid date of birth";
+      isValid = false;
+    }
+
+    if (formData.country.trim().length < 2) {
+      errors.country = "Country must be at least 2 characters long";
+      isValid = false;
+    }
+
+    setFormErrors(errors);
+    return isValid;
+  }
+
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear the error when the user starts typing
+    setFormErrors((prev) => ({ ...prev, [name]: undefined }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!validateForm()) return;
+
     setIsLoading(true);
     setScreeningResult(null);
 
@@ -85,7 +122,7 @@ export default function Form() {
         </Heading>
         <form onSubmit={handleSubmit} style={{ width: "100%" }}>
           <VStack spacing={4} align="stretch">
-            <FormControl>
+            <FormControl isInvalid={!!formErrors.fullName}>
               <FormLabel>Full Name</FormLabel>
               <Input
                 name="fullName"
@@ -95,19 +132,21 @@ export default function Form() {
                 required
                 bg="gray.50"
               />
+              <FormErrorMessage>{formErrors.fullName}</FormErrorMessage>
             </FormControl>
-            <FormControl>
+            <FormControl isInvalid={!!formErrors.dateOfBirth}>
               <FormLabel>Date of Birth</FormLabel>
               <Input
                 name="dateOfBirth"
-                placeholder="Add your date of birth here."
+                type="date"
                 value={formData.dateOfBirth}
                 onChange={handleInputChange}
                 required
                 bg="gray.50"
               />
+              <FormErrorMessage>{formErrors.dateOfBirth}</FormErrorMessage>
             </FormControl>
-            <FormControl>
+            <FormControl isInvalid={!!formErrors.country}>
               <FormLabel>Country</FormLabel>
               <Input
                 name="country"
@@ -117,6 +156,7 @@ export default function Form() {
                 required
                 bg="gray.50"
               />
+              <FormErrorMessage>{formErrors.country}</FormErrorMessage>
             </FormControl>
             <Button
               type="submit"
