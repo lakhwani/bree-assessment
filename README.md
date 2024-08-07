@@ -108,3 +108,7 @@ The frontend requires the following environment variables, defined in the `.env`
 ### Accessing the Application
 
 - Open your browser and navigate to `http://localhost:3000` to access the frontend.
+
+### Assumptions Made
+- Use of date of birth instead of birth year for more precise matching.
+- Displaying hits for DoB and Country only when the full name is a hit
