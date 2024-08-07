@@ -33,36 +33,38 @@ export const screenCustomerOfac = async (
     const { results } = response.data;
     console.log(JSON.stringify(results, null, 2));
 
-    if (results.length === 0) {
+    if (results.length === 0 || results[0].matchCount === 0) {
       return { nameHit: false, dobHit: false, countryHit: false };
     }
 
     const firstResult = results[0];
-    const hasMatches = firstResult.matchCount > 0;
 
-    if (!hasMatches) {
+    const nameHit = firstResult.matches.some((match) =>
+      match.matchSummary.matchFields.some(
+        (field) => field.fieldName.toLowerCase() === "name"
+      )
+    );
+
+    if (!nameHit) {
       return { nameHit: false, dobHit: false, countryHit: false };
     }
 
-    return {
-      nameHit: firstResult.matches.some((match) =>
-        match.matchSummary.matchFields.some(
-          (field) => field.fieldName.toLowerCase() === "name"
-        )
-      ),
-      dobHit: firstResult.matches.some((match) =>
-        match.matchSummary.matchFields.some(
-          (field) => field.fieldName.toLowerCase() === "dob"
-        )
-      ),
-      countryHit: firstResult.matches.some((match) =>
-        match.matchSummary.matchFields.some(
-          (field) =>
-            field.fieldName.toLowerCase() === "citizenship" ||
-            field.fieldName.toLowerCase() === "nationality"
-        )
-      ),
-    };
+    // Only check for DOB and country if there's a name hit
+    const dobHit = firstResult.matches.some(
+      (match) =>
+        match.sanction.personDetails?.birthDates?.some((date) =>
+          date.includes(dateOfBirth.split("-")[0])
+        ) || false
+    );
+
+    const countryHit = firstResult.matches.some(
+      (match) =>
+        match.sanction.personDetails?.citizenships?.includes(country) ||
+        match.sanction.personDetails?.nationalities?.includes(country) ||
+        false
+    );
+
+    return { nameHit, dobHit, countryHit };
   } catch (error) {
     console.error("Error screening customer:", error);
     throw new Error("Failed to screen customer");

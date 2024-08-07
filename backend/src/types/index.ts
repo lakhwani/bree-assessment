@@ -20,10 +20,15 @@ export interface OfacApiResponse {
         }>;
       };
       sanction: {
-        // Add other fields as needed
-        name: string;
+        id: string;
         type: string;
         categories: string[];
+        name: string;
+        personDetails?: {
+          birthDates?: string[];
+          citizenships?: string[];
+          nationalities?: string[];
+        };
       };
     }>;
   }>;
