@@ -5,12 +5,13 @@ import {
   Input,
   Button,
   Image,
-  Text,
   FormControl,
   FormLabel,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import Indicator from "./Indicator";
+import { screenCustomer } from "../api/screeningApi";
 
 interface FormData {
   fullName: string;
@@ -24,15 +25,43 @@ export default function Form() {
     dateOfBirth: "",
     country: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [screeningResult, setScreeningResult] = useState<null | {
+    nameHit: boolean;
+    dobHit: boolean;
+    countryHit: boolean;
+  }>(null);
+  const toast = useToast();
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Add your submit logic here
+    setIsLoading(true);
+    setScreeningResult(null);
+
+    try {
+      const result = await screenCustomer(
+        formData.fullName,
+        formData.dateOfBirth,
+        formData.country
+      );
+      console.log(result);
+      setScreeningResult(result);
+    } catch (error) {
+      toast({
+        title: "Screening Failed",
+        description: "There was an error while screening the customer.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -97,16 +126,20 @@ export default function Form() {
               mt={4}
               boxShadow="md"
               _hover={{ boxShadow: "lg" }}
+              isLoading={isLoading}
+              loadingText="Screening..."
             >
               Begin Screening
             </Button>
-            <Indicator
-              nameHit={true}
-              dobHit={false}
-              countryHit={false}
-            ></Indicator>
           </VStack>
         </form>
+        {screeningResult && (
+          <Indicator
+            nameHit={screeningResult.nameHit}
+            dobHit={screeningResult.dobHit}
+            countryHit={screeningResult.countryHit}
+          />
+        )}
       </VStack>
     </Box>
   );

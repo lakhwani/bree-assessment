@@ -16,7 +16,8 @@ const Indicator: React.FC<IndicatorProps> = ({
 
   return (
     <Box
-      mt={8}
+      mt={4}
+      minW="md"
       p={6}
       borderWidth={1}
       borderRadius="md"
